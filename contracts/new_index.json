@@ -1,0 +1,13 @@
+[
+  {
+    "description": "should_add_index",
+    "request": {
+      "method": "POST",
+      "uri": "/index",
+      "file": "index.json"
+    },
+    "response": {
+      "status": 200
+    }
+  }
+]
