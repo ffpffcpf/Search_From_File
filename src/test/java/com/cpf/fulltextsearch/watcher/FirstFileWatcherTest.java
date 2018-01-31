@@ -7,8 +7,8 @@ public class FirstFileWatcherTest {
 
     @Test
     public void testHandle() throws InterruptedException {
-        FirstFileWatcher watcher = new FirstFileWatcher();
-        watcher.handleEvent();
+        FirstFileWatcher watcher = new FirstFileWatcher("D:\\file_watcher_test");
+        watcher.start();
     }
 
 }
