@@ -1,16 +1,18 @@
 package com.cpf.fulltextsearch.dir;
 
+import com.cpf.fulltextsearch.dir.interesting.InterestingBox;
 import com.cpf.fulltextsearch.dir.listener.EventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
+@Data
+@Slf4j
 public class FirstFileWatcher {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FirstFileWatcher.class);
 
     private WatchService watchService;
 
@@ -18,6 +20,7 @@ public class FirstFileWatcher {
     private EventListener modifyEventListener;
     private EventListener deleteEventListener;
 
+    @Autowired
     private InterestingBox box;
 
     public FirstFileWatcher(String fileName) {
@@ -28,7 +31,7 @@ public class FirstFileWatcher {
                     StandardWatchEventKinds.ENTRY_DELETE,
                     StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -59,36 +62,10 @@ public class FirstFileWatcher {
         try {
             watchService.close();
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
-    private boolean isIgnoreFile(File file) {
-        return file.isHidden() || file.getName().contains("~") || file.getName().startsWith(".");
-    }
 
 
-    public EventListener getCreateEventListener() {
-        return createEventListener;
-    }
-
-    public void setCreateEventListener(EventListener createEventListener) {
-        this.createEventListener = createEventListener;
-    }
-
-    public EventListener getModifyEventListener() {
-        return modifyEventListener;
-    }
-
-    public void setModifyEventListener(EventListener modifyEventListener) {
-        this.modifyEventListener = modifyEventListener;
-    }
-
-    public EventListener getDeleteEventListener() {
-        return deleteEventListener;
-    }
-
-    public void setDeleteEventListener(EventListener deleteEventListener) {
-        this.deleteEventListener = deleteEventListener;
-    }
 }
