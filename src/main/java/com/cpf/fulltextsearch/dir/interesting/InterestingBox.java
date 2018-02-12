@@ -1,4 +1,4 @@
-package com.cpf.fulltextsearch.dir;
+package com.cpf.fulltextsearch.dir.interesting;
 
 import java.nio.file.Path;
 
