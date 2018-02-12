@@ -1,27 +1,24 @@
 package com.cpf.fulltextsearch.dir.interesting;
 
 import lombok.Data;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
 
-@ConditionalOnMissingBean(InterestingBox.class)
+//@ConditionalOnMissingBean(InterestingBox.class)
+@Component
 @Data
 public class DefaultInterestingBox implements InterestingBox {
-    private Set<String> suffix = new HashSet<>();
 
+    @Autowired
     private SuffixSetGetter suffixSetGetter;
 
-    public DefaultInterestingBox(){
-        suffix = suffixSetGetter.getSuffixSet();
-    }
 
     @Override
     public boolean isInteresting(Path path) {
-        String actualSuffix = path.toString().substring(path.toString().lastIndexOf("."));
-        return suffix.contains(actualSuffix);
+        String actualSuffix = path.toString().substring(path.toString().lastIndexOf(".") + 1);
+        return suffixSetGetter.getSuffixSet().contains(actualSuffix);
     }
 
 }
