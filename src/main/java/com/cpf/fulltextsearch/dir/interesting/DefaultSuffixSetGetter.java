@@ -14,12 +14,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-//@ConditionalOnMissingBean(SuffixSetGetter.class)
-@Component
 public class DefaultSuffixSetGetter implements SuffixSetGetter {
 
-    @Value("${suffix.path}")
     private String configFile;
+
+    public DefaultSuffixSetGetter(String configFile) {
+        this.configFile = configFile;
+    }
 
     @Override
     public Set<String> getSuffixSet() {
