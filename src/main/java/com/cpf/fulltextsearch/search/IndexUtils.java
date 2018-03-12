@@ -9,6 +9,7 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -46,14 +47,37 @@ public class IndexUtils {
                 IndexWriter indexWriter = new IndexWriter(indexStore, new IndexWriterConfig(chineseAnalyzer))
         ) {
 
-            Document document = new Document();
-            document.add(new Field(INDEX_FIELD_FILENAME, file.getName(), TextField.TYPE_STORED));
-            document.add(new Field(INDEX_FIELD_CONTENT, readContentAsString(file), TextField.TYPE_STORED));
-            document.add(new Field(INDEX_FIELD_FILE_PATH, file.getAbsolutePath(), TextField.TYPE_STORED));
-
-            indexWriter.addDocument(document);
+            indexWriter.updateDocument(new Term("id", file.getAbsolutePath()), newDocument(file));
 
         } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private static Document newDocument(File file) {
+
+        Document document = new Document();
+        document.add(new Field(INDEX_FIELD_FILENAME, file.getName(), TextField.TYPE_STORED));
+        document.add(new Field(INDEX_FIELD_CONTENT, readContentAsString(file), TextField.TYPE_STORED));
+        document.add(new Field(INDEX_FIELD_FILE_PATH, file.getAbsolutePath(), TextField.TYPE_STORED));
+        document.add(new Field("id", file.getAbsolutePath(), TextField.TYPE_STORED));
+        return document;
+    }
+
+    public static void removeDocumentByFile(File file) {
+        try (
+                Analyzer chineseAnalyzer = new CJKAnalyzer();
+                Directory indexStore = FSDirectory.open(Paths.get(INDEX_PATH));
+                IndexWriter indexWriter = new IndexWriter(indexStore, new IndexWriterConfig(chineseAnalyzer))
+        ) {
+
+            QueryParser fileNameParser = new QueryParser(INDEX_FIELD_FILE_PATH, chineseAnalyzer);
+
+            Query pathQuery = fileNameParser.parse(file.getAbsolutePath());
+
+            indexWriter.deleteDocuments(pathQuery);
+
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
@@ -110,10 +134,6 @@ public class IndexUtils {
         }
 
         return "";
-    }
-
-    public void removeDocumentFromIndex(){
-
     }
 
 }

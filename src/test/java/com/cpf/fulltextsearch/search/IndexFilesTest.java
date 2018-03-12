@@ -14,14 +14,19 @@ public class IndexFilesTest {
         //given
         File expectedFile = new File("D:\\file_watcher_test\\hello.txt");
         File file = new File("D:\\file_watcher_test\\nice.txt");
-        String searchWord = "好";
+        String searchWord = "password";
         //when
-//        IndexUtils.addFileIntoIndex(expectedFile);
-//        IndexUtils.addFileIntoIndex(file);
+        IndexUtils.addFileIntoIndex(expectedFile);
+        IndexUtils.addFileIntoIndex(file);
 
         List<HitResult> results = IndexUtils.searchFiles(searchWord);
 
+//        IndexUtils.removeDocumentByFile(expectedFile);
+//        IndexUtils.removeDocumentByFile(file);
+
         //then
+        Assert.assertFalse(results.isEmpty());
+        Assert.assertEquals(1, results.size());
         for(HitResult hit: results){
             Assert.assertTrue(hit.getContent().contains(searchWord));
             Assert.assertEquals(expectedFile.getAbsolutePath(), hit.getFile().getAbsolutePath());
